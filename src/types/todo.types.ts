@@ -6,15 +6,10 @@ export interface Todo {
   createdAt: Date;
   updatedAt: Date;
 }
-
 export interface CreateTodoRequest {
-  text: string;
+  // Ajoute ce qu'il manque
 }
 
-export interface UpdateTodoRequest {
-  isCompleted?: boolean;
-  text?: string;
-}
 
 export interface TodoResponse {
   id: string;

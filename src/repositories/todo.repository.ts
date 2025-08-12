@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { MySql2Database } from 'drizzle-orm/mysql2';
 import { todos } from '../db/schema';
-import { Todo, CreateTodoRequest, UpdateTodoRequest } from '../types/todo.types';
+import { Todo } from '../types/todo.types';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../db/connection';
 
@@ -17,18 +17,8 @@ export class TodoRepository {
     return result.length > 0 ? this.mapToTodo(result[0]) : null;
   }
 
-  async create(data: CreateTodoRequest): Promise<Todo> {
-    const id = uuidv4();
-    const now = new Date();
-    
-    await db.insert(todos).values({
-      id,
-      text: data.text,
-      isCompleted: false,
-      date: now,
-      createdAt: now,
-      updatedAt: now
-    });
+  async create(todo: Todo): Promise<Todo> {
+    await db.insert(todos).values(todo);
 
     const result = await this.findById(id);
     if (!result) {
@@ -36,36 +26,6 @@ export class TodoRepository {
     }
     return result;
   }
-
-  async update(id: string, data: UpdateTodoRequest): Promise<Todo | null> {
-    try {
-      const updateData: any = {
-        updatedAt: new Date()
-      };
-
-      if (data.text !== undefined) {
-        updateData.text = data.text;
-      }
-      if (data.isCompleted !== undefined) {
-        updateData.isCompleted = data.isCompleted;
-      }
-
-      await db.update(todos).set(updateData).where(eq(todos.id, id));
-      return await this.findById(id);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  async delete(id: string): Promise<boolean> {
-    try {
-      await db.delete(todos).where(eq(todos.id, id));
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
-
   private mapToTodo(row: any): Todo {
     return {
       id: row.id,
