@@ -1,22 +1,19 @@
 import { TodoRepository } from '../repositories/todo.repository';
 import { Todo, CreateTodoRequest, UpdateTodoRequest } from '../types/todo.types';
 
-export class TodoService {
-  private todoRepository: TodoRepository;
+const todoRepository = new TodoRepository();
 
-  constructor(todoRepository: TodoRepository) {
-    this.todoRepository = todoRepository;
-  }
+export class TodoService {
 
   async getAllTodos(): Promise<Todo[]> {
-    return await this.todoRepository.findAll();
+    return await todoRepository.findAll();
   }
 
   async getTodoById(id: string): Promise<Todo | null> {
     if (!id || typeof id !== 'string') {
       throw new Error('Invalid todo ID');
     }
-    return await this.todoRepository.findById(id);
+    return await todoRepository.findById(id);
   }
 
   async createTodo(data: CreateTodoRequest): Promise<Todo> {
@@ -24,7 +21,7 @@ export class TodoService {
       throw new Error('Todo text is required and must be a non-empty string');
     }
 
-    return await this.todoRepository.create({
+    return await todoRepository.create({
       text: data.text.trim()
     });
   }
@@ -34,7 +31,7 @@ export class TodoService {
       throw new Error('Invalid todo ID');
     }
 
-    const existingTodo = await this.todoRepository.findById(id);
+    const existingTodo = await todoRepository.findById(id);
     if (!existingTodo) {
       return null;
     }
@@ -55,7 +52,7 @@ export class TodoService {
       updateData.isCompleted = data.isCompleted;
     }
 
-    return await this.todoRepository.update(id, updateData);
+    return await todoRepository.update(id, updateData);
   }
 
   async deleteTodo(id: string): Promise<boolean> {
@@ -63,11 +60,11 @@ export class TodoService {
       throw new Error('Invalid todo ID');
     }
 
-    const existingTodo = await this.todoRepository.findById(id);
+    const existingTodo = await todoRepository.findById(id);
     if (!existingTodo) {
       return false;
     }
 
-    return await this.todoRepository.delete(id);
+    return await todoRepository.delete(id);
   }
 }

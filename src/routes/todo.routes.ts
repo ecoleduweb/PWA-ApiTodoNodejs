@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import { TodoController } from '../controllers/todo.controller';
 
-export const createTodoRoutes = (todoController: TodoController): Router => {
+export const createTodoRoutes = (): Router => {
+  
+  const todoController = new TodoController();
+  
   const router = Router();
 
   router.get('/todos', todoController.getAllTodos);

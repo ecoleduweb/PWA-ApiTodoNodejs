@@ -3,21 +3,17 @@ import { MySql2Database } from 'drizzle-orm/mysql2';
 import { todos } from '../db/schema';
 import { Todo, CreateTodoRequest, UpdateTodoRequest } from '../types/todo.types';
 import { v4 as uuidv4 } from 'uuid';
+import { db } from '../db/connection';
 
 export class TodoRepository {
-  private db: MySql2Database<any>;
-
-  constructor(db: MySql2Database<any>) {
-    this.db = db;
-  }
 
   async findAll(): Promise<Todo[]> {
-    const result = await this.db.select().from(todos).orderBy(todos.createdAt);
+    const result = await db.select().from(todos).orderBy(todos.createdAt);
     return result.map(this.mapToTodo);
   }
 
   async findById(id: string): Promise<Todo | null> {
-    const result = await this.db.select().from(todos).where(eq(todos.id, id)).limit(1);
+    const result = await db.select().from(todos).where(eq(todos.id, id)).limit(1);
     return result.length > 0 ? this.mapToTodo(result[0]) : null;
   }
 
@@ -25,7 +21,7 @@ export class TodoRepository {
     const id = uuidv4();
     const now = new Date();
     
-    await this.db.insert(todos).values({
+    await db.insert(todos).values({
       id,
       text: data.text,
       isCompleted: false,
@@ -54,7 +50,7 @@ export class TodoRepository {
         updateData.isCompleted = data.isCompleted;
       }
 
-      await this.db.update(todos).set(updateData).where(eq(todos.id, id));
+      await db.update(todos).set(updateData).where(eq(todos.id, id));
       return await this.findById(id);
     } catch (error) {
       return null;
@@ -63,7 +59,7 @@ export class TodoRepository {
 
   async delete(id: string): Promise<boolean> {
     try {
-      await this.db.delete(todos).where(eq(todos.id, id));
+      await db.delete(todos).where(eq(todos.id, id));
       return true;
     } catch (error) {
       return false;

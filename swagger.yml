@@ -3,7 +3,7 @@ info:
   title: Todo API
   version: 1.0.0
 servers:
-- url: https://todoapirdl-87e5a72882d0.herokuapp.com
+- url: http://localhost:3001/
 paths:
   /todos:
     get:

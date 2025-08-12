@@ -1,353 +1,54 @@
-# TODO API
+# TODO-API
 
-A modern, production-ready RESTful API built with Node.js, TypeScript, Express, and MariaDB using the controller-service-repository architecture pattern.
+## Base de données
 
-## 🚀 Features
+Voici les étapes pour créer la basa de données selon une approche code first.
 
-- **TypeScript**: Full TypeScript support for better development experience
-- **Express.js**: Fast, minimalist web framework for Node.js
-- **MariaDB**: Robust SQL database with Drizzle ORM
-- **Architecture**: Clean controller-service-repository pattern
-- **API Documentation**: Interactive Swagger/OpenAPI documentation
-- **Security**: Helmet.js security headers and CORS support
-- **Error Handling**: Centralized error handling middleware
-- **Deployment Ready**: GitHub Actions workflow and setup scripts
-- **Health Checks**: Built-in health monitoring endpoint
+1. Copier le fichier .env.example et le renommer .env
+2. Compléter la configuration en remplissant les valeurs manquantes après le =. Dans notre cas, il ne manquerait que le `DB_PASSWORD=ton_mot_de_passe`.
+3. Dans mariaDB, créer la base de données todo_api
+4. exécuter la commande `npm run db:push` pour créer la base de données. La table est générée à partir du fichier `schema.ts`. Va y jeter un coup d'oeil.
+5. Une fois que c'est fait, exécute `npm run dev` pour démarrer le serveur et va sur `http://localhost:3001/health`. Tu devrais avoir `"database": "healthy"` d'affihché.
+6. C'est drizzle qui sera notre ORM pour cette session.
 
-## 📋 Requirements
+### Questions à répondre :
 
-- Node.js 18 or higher
-- MariaDB/MySQL 10.3 or higher
-- npm 8 or higher
+1. Quel commande permet de démarrer ton serveur node.js?
+2. Où sont storées les variables qui servent à configurer la base de données?
+3. Comment sont lues ces variables qui sont dans le fichier .env?
+4. Comment la table todos a-t-elle été créée?
+5. Dans quel dossier se situe la configuration de la base de données?
+6. Comment ferais-tu pour modifier
+   1. Le nom de la base de données
+   2. Le type de base de données
+   3. Le nom d'une colonne
 
-## 🛠 Quick Start
-
-### 1. Clone and Install
-
-```bash
-git clone <repository-url>
-cd todo-api
-chmod +x setup.sh
-./setup.sh
+## Swagger
+Il est possible de tester l'API à partir du fichier swagger.yml. Voici le lien `http://localhost:3001/swagger/`. Tu peux ajouter cette ligne une fois que ton site sera dé
+ployé.
+```
+servers:
+  - url: http://localhost:3001
+  - url: lien vers ton site web déployé
 ```
 
-The setup script will:
-- Install all dependencies
-- Set up environment configuration
-- Create and migrate the database
-- Build the TypeScript code
-- Install PM2 (optional)
-- Create system service (Linux only)
+### Questions à répondre :
 
-### 2. Manual Setup (Alternative)
+1. À partir du fichier swagger, exécute le get sur /todos. Que reçois-tu?
+2. Que font les verbes GET, POST, PATCH et DELETE?
+3. Est-ce que POST / todos fonctionne? Non? C'est normal, on va le coder au prochain cours!
 
-```bash
-# Install dependencies
-npm install
 
-# Copy environment file
-cp .env.example .env
+## Déploiement
 
-# Update database configuration in .env
-# DB_HOST=localhost
-# DB_PORT=3306
-# DB_USER=root
-# DB_PASSWORD=your_password
-# DB_NAME=todo_api
+J'aimerais que tu déploies cet API sur un VPS digital ocean. Les contraintes sont les suivantes :
+- Ton api doit être accessible sur une addresse de type fqdn (fully qualified domain name) ex : antoine.com  et non pas une adresse IP.
+- Ton api doit être déployée une fois buildée (`npm run build`) sur le serveur. Un dossier nommé dist sera créé et c'est le fichier server.js qu'il faut démarrer.
+- Jamais le fichier .env doit être dans ton projet (il contient le mot de passe vers ta base de données). Tu dois donc gérer les variables d'environnement dans le serveur directement.
+  - Soit tu crée un autre fichier .env (moins sécuritaire car il contient des informations critiques)
+  - Soit tu lance le serveur avec une ligne dans ce genre : `PORT=3001 NODE_ENV=production DB_HOST=localhost ...ETC..... node dist/server.js`
+- (optionnel, mais obligatoire plus tard) Ton API doit être disponible en https. Avec nginx, c'est très simple à mettre en place.
 
-# Build the application
-npm run build
+Astuce : Crée un fichier bash qui permet d'automatiser le déploiement de ton API losrqu'il a des modifications. Les opérations qui ne sont qu'effectuées une seule fois (comme installer et configurer le serveur ngnix) ne devraient pas faire partie de ce script. Par contre, la migration de la base de données, la ligne de commande pour démarrer le serveur, sont des éléments que tu devrais retrouver dans ton script.
 
-# Run database migrations
-npm run db:migrate
-
-# Start development server
-npm run dev
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-# Database Configuration
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=todo_api
-
-# Server Configuration
-PORT=3001
-NODE_ENV=development
-
-# Security (Optional)
-JWT_SECRET=your-secret-key
-```
-
-### Database Setup
-
-Ensure MariaDB/MySQL is running and create a database:
-
-```sql
-CREATE DATABASE todo_api;
-```
-
-## 📝 API Endpoints
-
-### Base URL
-```
-http://localhost:3001/api
-```
-
-### Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/todos` | Get all todos |
-| GET | `/todo/:id` | Get todo by ID |
-| POST | `/todo` | Create new todo |
-| PATCH | `/todo/:id` | Update todo |
-| DELETE | `/todo/:id` | Delete todo |
-
-### Request/Response Examples
-
-**Create Todo:**
-```bash
-curl -X POST http://localhost:3001/api/todo \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Learn TypeScript"}'
-```
-
-**Update Todo:**
-```bash
-curl -X PATCH http://localhost:3001/api/todo/123 \
-  -H "Content-Type: application/json" \
-  -d '{"isCompleted": true}'
-```
-
-## 📚 API Documentation
-
-Interactive API documentation is available at:
-```
-http://localhost:3001/swagger
-```
-
-## 🏗 Project Structure
-
-```
-├── src/
-│   ├── controllers/         # Request handlers
-│   ├── services/           # Business logic
-│   ├── repositories/       # Data access layer
-│   ├── db/                 # Database configuration
-│   ├── routes/             # Route definitions
-│   ├── middleware/         # Custom middleware
-│   ├── types/              # TypeScript type definitions
-│   └── server.ts           # Application entry point
-├── drizzle/                # Database migrations
-├── .github/workflows/      # CI/CD workflows
-├── dist/                   # Compiled JavaScript (generated)
-├── package.json
-├── tsconfig.json
-├── drizzle.config.ts
-├── setup.sh               # Setup script
-└── README.md
-```
-
-## 🧪 Development
-
-### Available Scripts
-
-```bash
-# Development
-npm run dev          # Start development server with hot reload
-
-# Building
-npm run build        # Compile TypeScript to JavaScript
-
-# Production
-npm start           # Start production server
-
-# Database
-npm run db:generate # Generate database schema
-npm run db:migrate  # Run database migrations
-npm run db:studio   # Open Drizzle Studio
-
-# Quality
-npm run lint        # Lint code with ESLint
-npm test           # Run tests with Jest
-
-# Setup
-npm run setup      # Complete project setup
-```
-
-### Development Workflow
-
-1. **Start development server:**
-   ```bash
-   npm run dev
-   ```
-
-2. **Make changes to TypeScript files in `src/`**
-
-3. **Database changes:**
-   ```bash
-   # Modify schema in src/db/schema.ts
-   npm run db:generate  # Generate migration
-   npm run db:migrate   # Apply migration
-   ```
-
-4. **Test your changes:**
-   ```bash
-   npm test
-   npm run lint
-   ```
-
-## 🚀 Deployment
-
-### Automatic Deployment (GitHub Actions)
-
-The project includes a GitHub Actions workflow that:
-- Runs tests on every push/PR
-- Deploys to production on main branch updates
-- Handles database migrations
-- Uses PM2 for process management
-
-**Required GitHub Secrets:**
-
-**Deployment Secrets:**
-- `HOST`: Server IP address
-- `USERNAME`: SSH username
-- `SSH_KEY`: Private SSH key
-- `PORT`: SSH port (usually 22)
-
-**Database Secrets:**
-- `DB_HOST`: Database host (e.g., localhost)
-- `DB_PORT`: Database port (e.g., 3306)
-- `DB_USER`: Database username
-- `DB_PASSWORD`: Database password
-- `DB_NAME`: Database name
-- `JWT_SECRET`: JWT secret key for authentication
-
-### Manual Deployment
-
-1. **Build the application:**
-   ```bash
-   npm run build
-   ```
-
-2. **Deploy using PM2:**
-   ```bash
-   pm2 start dist/server.js --name todo-api
-   pm2 save
-   ```
-
-3. **Or use systemd service:**
-   ```bash
-   sudo systemctl start todo-api
-   sudo systemctl enable todo-api
-   ```
-
-### Production Checklist
-
-- [ ] Set `NODE_ENV=production` in `.env`
-- [ ] Configure database with production credentials
-- [ ] Set up reverse proxy (nginx/Apache)
-- [ ] Configure SSL/TLS certificates
-- [ ] Set up monitoring and logging
-- [ ] Configure backup strategy
-
-## 🔒 Security
-
-- **Helmet.js**: Security headers protection
-- **CORS**: Cross-origin resource sharing control
-- **Input Validation**: Request data validation
-- **Error Handling**: No sensitive information exposure
-- **Environment Variables**: Sensitive data protection
-
-## 🧪 Testing
-
-```bash
-# Run all tests
-npm test
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run tests in watch mode
-npm run test:watch
-```
-
-## 📊 Monitoring
-
-### Health Check
-
-```bash
-curl http://localhost:3001/health
-```
-
-Response:
-```json
-{
-  "status": "OK",
-  "timestamp": "2024-01-15T10:30:00.000Z"
-}
-```
-
-### Database Connection
-
-The application includes database connection monitoring and automatic retry logic.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/new-feature`
-3. Make changes and commit: `git commit -am 'Add new feature'`
-4. Push to the branch: `git push origin feature/new-feature`
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Database Connection Error:**
-- Check if MariaDB/MySQL is running
-- Verify database credentials in `.env`
-- Ensure database exists
-
-**Port Already in Use:**
-- Change PORT in `.env` file
-- Kill existing process: `lsof -ti:3001 | xargs kill -9`
-
-**TypeScript Compilation Errors:**
-- Run `npm run build` to see detailed errors
-- Check `tsconfig.json` configuration
-
-**Migration Errors:**
-- Ensure database user has sufficient privileges
-- Check database connection settings
-- Run migrations manually: `npm run db:migrate`
-
-### Getting Help
-
-- Check the [Issues](../../issues) page
-- Review API documentation at `/swagger`
-- Check application logs for detailed error messages
-
-## 📞 Support
-
-For support and questions:
-- Create an issue in the repository
-- Check the documentation
-- Review the troubleshooting section
-
----
-
-Made with ❤️ using TypeScript, Express.js, and Drizzle ORM
+Enrichissement : Il est possible d'effectuer un déploiement automatique en exécutant ton script suite à une modification de ton projet dans github, je te montrerai comment faire plus tard dans le cours, mais cela ne sera pas obligatoire.

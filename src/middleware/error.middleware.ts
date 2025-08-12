@@ -14,6 +14,7 @@ export const errorHandler = (
   const statusCode = error.statusCode || 500;
   const message = error.message || 'Internal Server Error';
 
+  console.log("🚀 ~ errorHandler ~ process.env.NODE_ENV:", process.env.NODE_ENV)
   console.error(`Error ${statusCode}: ${message}`);
   console.error(error.stack);
 
