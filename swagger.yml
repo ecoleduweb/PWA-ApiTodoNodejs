@@ -3,7 +3,7 @@ info:
   title: Todo API
   version: 1.0.0
 servers:
-- url: http://localhost:3001/
+- url: http://localhost:3001/api/
 paths:
   /todos:
     get:
@@ -22,6 +22,7 @@ paths:
                   isCompleted: false
                   date: "2023-10-19T00:00:00.000Z"
                   text: "todo not completed"
+  /todo:
     post:
       summary: Create a new todo
       requestBody:
