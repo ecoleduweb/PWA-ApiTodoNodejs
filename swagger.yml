@@ -68,6 +68,8 @@ paths:
               properties:
                 isCompleted:
                   type: boolean
+                text:
+                  type: string
       responses:
         204:
           description: Todo patched
