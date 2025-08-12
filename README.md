@@ -52,3 +52,12 @@ J'aimerais que tu déploies cet API sur un VPS digital ocean. Les contraintes so
 Astuce : Crée un fichier bash qui permet d'automatiser le déploiement de ton API losrqu'il a des modifications. Les opérations qui ne sont qu'effectuées une seule fois (comme installer et configurer le serveur ngnix) ne devraient pas faire partie de ce script. Par contre, la migration de la base de données, la ligne de commande pour démarrer le serveur, sont des éléments que tu devrais retrouver dans ton script.
 
 Enrichissement : Il est possible d'effectuer un déploiement automatique en exécutant ton script suite à une modification de ton projet dans github, je te montrerai comment faire plus tard dans le cours, mais cela ne sera pas obligatoire.
+
+
+## Node.js
+
+### NodeJS
+En te basant sur le swagger, ajoute les routes POST, PATCH et DELETE ainsi que toute la logique qui s'y rattache en te basant sur les get.
+
+### Swagger
+Ajoute dans le swagger la route pour aller chercher un TODO/ID
