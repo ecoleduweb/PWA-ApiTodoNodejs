@@ -59,5 +59,14 @@ Enrichissement : Il est possible d'effectuer un déploiement automatique en exé
 ### NodeJS
 En te basant sur le swagger, ajoute les routes POST, PATCH et DELETE ainsi que toute la logique qui s'y rattache en te basant sur les get.
 
+### Quelques questions
+1. Explique cette blague https://www.reddit.com/r/ProgrammerHumor/comments/1h4v9i3/dontyouhateitwhenthathappens/#lightbox
+2. Ordonne les couches suivantes selon note architecture. (Controlleur, Service, Repo, errorHandlerMiddleware, )
+3. Quel est le rôle du controlleur?
+4. Quel est le rôle du service?
+5. Quel est le rôle du repository?
+6. Dans notre projet, est-ce qu'il y a des DTOS et des DAOS?
+7. Serais-tu capable d'ajouter la logique dans notre projet pour un login?
+
 ### Swagger
 Ajoute dans le swagger la route pour aller chercher un TODO/ID
