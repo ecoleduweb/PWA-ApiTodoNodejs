@@ -27,11 +27,11 @@ export class TodoService {
     // qu'est-ce qui est optionnel (qu'on peut définir par défaut) ?
     
     // const todo = {
+    //   id,
     //   text: ,
     //   isCompleted: , 
-    //   date: , 
     //   createdAt: , // Date de création
-    //   updatedAt
+    //   updatedAt // meme date que celle de creation pour la mise à jour.
     // };
     // On appel le repo pour créer le todo.
     // Ensuite, on retourne le todo créé au contrôleur.

@@ -20,18 +20,18 @@ export class TodoRepository {
   async create(todo: Todo): Promise<Todo> {
     await db.insert(todos).values(todo);
 
-    const result = await this.findById(id);
+    const result = await this.findById(todo.id);
     if (!result) {
       throw new Error('Failed to create todo');
     }
     return result;
   }
+  
   private mapToTodo(row: any): Todo {
     return {
       id: row.id,
       text: row.text,
       isCompleted: row.isCompleted,
-      date: row.date,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt
     };
