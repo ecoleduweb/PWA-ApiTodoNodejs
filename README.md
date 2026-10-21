@@ -2,7 +2,7 @@
 
 ## Base de données
 
-Voici les étapes pour créer la basa de données selon une approche code first.
+Voici les étapes pour créer la base de données selon une approche code first.
 
 1. Copier le fichier .env.example et le renommer .env
 2. Compléter la configuration en remplissant les valeurs manquantes après le =. Dans notre cas, il ne manquerait que le `DB_PASSWORD=ton_mot_de_passe`.
