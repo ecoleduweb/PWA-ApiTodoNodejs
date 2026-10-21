@@ -1,8 +1,6 @@
 import { eq } from 'drizzle-orm';
-import { MySql2Database } from 'drizzle-orm/mysql2';
 import { todos } from '../db/schema';
 import { Todo } from '../types/todo.types';
-import { v4 as uuidv4 } from 'uuid';
 import { db } from '../db/connection';
 
 export class TodoRepository {
@@ -25,6 +23,15 @@ export class TodoRepository {
       throw new Error('Failed to create todo');
     }
     return result;
+  }
+
+  async delete(id: string): Promise<void> {
+    await db.delete(todos).where(eq(todos.id, id));
+  }
+
+  async update(id: string, todo: Partial<Todo>): Promise<Todo> {
+    await db.update(todos).set(todo).where(eq(todos.id, id));
+    return this.findById(id) as Promise<Todo>;
   }
   
   private mapToTodo(row: any): Todo {

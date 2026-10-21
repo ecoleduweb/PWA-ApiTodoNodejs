@@ -41,4 +41,33 @@ export class TodoController {
       next(error);
     }
   };
+
+  updateTodo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = req.params.id;
+      const updatedTodo = await todoService.updateTodo(id, req.body); 
+      if (!updatedTodo) {
+        res.status(404).json({ error: 'Todo not found' });
+        return;
+      }
+      res.json(updatedTodo);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  deleteTodo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = req.params.id;
+      const deleted = await todoService.deleteTodo(id);
+
+      if (!deleted) {
+        res.status(404).json({ error: 'Todo not found' });
+        return;
+      }         
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
 }

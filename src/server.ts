@@ -27,8 +27,10 @@ app.use(express.json());
 app.use('/api', createTodoRoutes());
 app.use('/', createHealthRoutes());
 
-const swaggerDocument = yaml.load(path.join(__dirname, '../swagger.yml'));
-app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+if (process.env.NODE_ENV === 'development') {
+  const swaggerDocument = yaml.load(path.join(__dirname, '../swagger.yml'));
+  app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
 
 app.get('/ping', (req, res) => {
   res.json({ message: 'pong', timestamp: new Date().toISOString() });

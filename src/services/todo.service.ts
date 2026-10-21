@@ -1,5 +1,5 @@
 import { TodoRepository } from '../repositories/todo.repository';
-import { Todo, CreateTodoRequest } from '../types/todo.types';
+import { Todo, CreateTodoRequest, UpdateTodoRequest } from '../types/todo.types';
 import { v4 as uuidv4 } from 'uuid';
 
 const todoRepository = new TodoRepository();
@@ -36,6 +36,31 @@ export class TodoService {
     // On appel le repo pour créer le todo.
     // Ensuite, on retourne le todo créé au contrôleur.
   }
+
+  async updateTodo(id: string, data: UpdateTodoRequest) :Promise<Todo | null> {
+    // Valider l'ID
+    const todoToUpdate = await this.getTodoById(id);
+    if (!todoToUpdate) {
+      return null;
+    }
+
+    todoToUpdate.updatedAt = new Date();
+    todoToUpdate.text = data.text;
+    todoToUpdate.isCompleted = data.isCompleted;
+    // Appeler le repo pour sauvegarder les changements
+    await todoRepository.update(id, todoToUpdate);
+    return todoToUpdate;
+  }
+
+  async deleteTodo(id: string) {
+    const todoToUpdate = await this.getTodoById(id);
+    if (!todoToUpdate) {
+      return null;
+    }
+    await todoRepository.delete(id);
+    return todoToUpdate;
+  }
+
 
   // Les autres actions du service (update, delete, etc.) peuvent être ajoutées ici
   
