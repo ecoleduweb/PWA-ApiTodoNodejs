@@ -4,7 +4,6 @@ export interface User {
     firstName: string;
     email: string;
     passwordHash: string;
-    balance: string;
     createdAt: Date;
 }
 
@@ -38,6 +37,13 @@ export interface UserResponse {
     lastName: string;
     firstName: string;
     email: string;
-    balance: string;
     createdAt: Date;
+}
+
+export interface UserLoginResponse {
+    id: string;
+    lastName: string;
+    firstName: string;
+
+    token: string;
 }

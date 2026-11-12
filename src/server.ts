@@ -6,14 +6,14 @@ import yaml from 'yamljs';
 import dotenv from 'dotenv';
 import path from 'path';
 
-import { createTodoRoutes } from './routes/todo.routes';
 import { createHealthRoutes } from './routes/health.routes';
 import { errorHandler } from './middleware/error.middleware';
 import { createAuthRoutes } from './routes/auth.routes';
+import { createAccountRoutes } from './routes/account.routes';
 
 dotenv.config();
 
-const app = express();
+export const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(helmet());
@@ -26,12 +26,14 @@ app.use(express.json());
 
   
 app.use('/api/auth', createAuthRoutes());
-app.use('/api', createTodoRoutes());
+app.use('/api', createAccountRoutes());
 app.use('/', createHealthRoutes());
 
 // Valider avec l'AI pourquoi j'avais une erreur quand je lancais, change le .join(__dirname, '../swagger.yml') par path.resolve('swagger.yml') et ça a marché
-const swaggerDocument = yaml.load(path.resolve('swagger.yml'));
-app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+if(process.env.NODE_ENV !== 'production') {
+  const swaggerDocument = yaml.load(path.resolve('swagger.yml'));
+  app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
 
 app.get('/ping', (req, res) => {
   res.json({ message: 'pong', timestamp: new Date().toISOString() });

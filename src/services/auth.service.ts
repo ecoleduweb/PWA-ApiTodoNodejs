@@ -1,5 +1,5 @@
 import { UserRepository } from '../repositories/user.repository';
-import { NewUser, User } from '../types/user.types';
+import { NewUser, User, UserLoginResponse } from '../types/user.types';
 import { v4 as uuidv4 } from 'uuid';
 import {RegisterUserRequest, LoginUserRequest, UserResponse} from '../types/user.types';
 import bcrypt from 'bcrypt';
@@ -19,9 +19,8 @@ export class AuthService {
     // On génère un ID unique pour le user.
     const id = uuidv4();
     // Hash the password before storing it
-    const saltRounds = 2;
+    const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(data.password, saltRounds);
-
     
     // quand on crée un user, qu'est-ce qui est requis ?
     const newUser: NewUser = {
@@ -40,12 +39,11 @@ export class AuthService {
       lastName: createdUser.lastName,
       firstName: createdUser.firstName,
       email: createdUser.email,
-      balance: createdUser.balance,
       createdAt: createdUser.createdAt
     };
   }
 
-  async login(data: LoginUserRequest): Promise<UserResponse> {
+  async login(data: LoginUserRequest): Promise<UserLoginResponse> {
     const user = await userRepository.findByEmail(data.email);
     if (!user) {
       throw new Error('Invalid email or password');
@@ -58,21 +56,9 @@ export class AuthService {
       id: user.id,
       lastName: user.lastName,
       firstName: user.firstName,
-      email: user.email,
-      balance: user.balance,
-      createdAt: user.createdAt
+      token: '' // Token generation will be handled in the controller
     };
   }
 
-  async logout = (req: Request, res: Response): void => {
-    res.clearCookie('authToken', {
-      path: '/'
-    });
   
-    res.status(200).json({
-      message: 'User logged out successfully'
-    });
-  };
-
-//  async login(data: LoginUserRequest): Promise<UserResponse> {
-  // Implementation for user login
+}

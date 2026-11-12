@@ -1,12 +1,13 @@
 {
-  "name": "todo-api",
+  "name": "bank-api",
   "type": "module",
   "version": "1.0.0",
-  "description": "A TypeScript Node.js API with Express, MariaDB, and Prisma ORM following controller-service-repository architecture",
+  "description": "A TypeScript Node.js API with Express, MariaDB, and Drizzle ORM following controller-service-repository architecture",
   "main": "dist/server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node -e \"require('node:fs').writeFileSync('dist/package.json', JSON.stringify({ type: 'commonjs' }))\"",
     "start": "node dist/server.js",
+    "test": "npm run build && node --test tests/*.test.cjs",
     "dev": "tsx watch src/server.ts",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",

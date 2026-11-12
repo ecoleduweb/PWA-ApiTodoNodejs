@@ -1,7 +1,8 @@
 import { eq } from 'drizzle-orm';
 import { NewUser, User } from '../types/user.types';
-import { users } from '../db/schema';
+import { users, account } from '../db/schema';
 import { db } from '../db/connection';
+import { randomUUID } from 'crypto';
 
 export class UserRepository {
   async findById(id: string): Promise<User | null> {
@@ -15,23 +16,30 @@ export class UserRepository {
   }
 
   async create(user: NewUser): Promise<User> {
-    await db.insert(users).values(user);
-
-    const result = await this.findById(user.id);
-    if (!result) {
-      throw new Error('Failed to create user');
-    }
-    return result;
+    
+    return db.transaction(async (tx) => {
+      await tx.insert(users).values(user);
+  
+      await tx.insert(account).values({
+        id: randomUUID(),
+        userId: user.id,
+      });
+  
+      const [createdUser] = await tx
+        .select()
+        .from(users)
+        .where(eq(users.id, user.id))
+        .limit(1);
+  
+      if (!createdUser) {
+        throw new Error('Failed to create user');
+      }
+  
+      return this.mapToUser(createdUser);
+    });
   }
 
-  // async delete(id: string): Promise<void> {
-  //   await db.delete(users).where(eq(users.id, id));
-  // }
 
-  // async update(id: string, user: Partial<User>): Promise<User> {
-  //   await db.update(users).set(user).where(eq(users.id, id));
-  //   return this.findById(id) as Promise<User>;
-  // }
   
   private mapToUser(row: any): User {
     return {
@@ -40,7 +48,6 @@ export class UserRepository {
       firstName: row.firstName,
       email: row.email,
       passwordHash: row.passwordHash,
-      balance: row.balance,
       createdAt: row.createdAt
     };
   }
