@@ -11,12 +11,13 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ): void => {
-  const statusCode = error.statusCode || 500;
+  const statusCode = error.statusCode || 500; // Si tu crée un nouveau type d'erreur, tu dois ajouter dans la classe statusCode pour lui donner le bon code d'erreur.
   const message = error.message || 'Internal Server Error';
-
-  console.error(`Error ${statusCode}: ${message}`);
-  console.error(error.stack);
-
+  if (statusCode === 500) {
+    console.error(`Error ${statusCode}: ${message}`);
+    console.error(error.stack);
+  }
+  
   res.status(statusCode).json({
     error: message,
     ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
